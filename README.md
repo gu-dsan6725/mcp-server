@@ -292,7 +292,7 @@ uv run python server.py
 
 You should see:
 ```
-Starting World Bank MCP Server on http://127.0.0.1:8000/mcp
+Starting World Bank MCP Server on http://127.0.0.1:8765/mcp
 Press Ctrl+C to stop
 ```
 
@@ -303,7 +303,7 @@ npx @modelcontextprotocol/inspector
 
 **In the Inspector UI:**
 1. Select **"Streamable HTTP"** transport
-2. Enter URL: `http://127.0.0.1:8000/mcp`
+2. Enter URL: `http://127.0.0.1:8765/mcp`
 3. Click **Connect**
 4. Navigate to **Resources** tab - test each resource
 5. Navigate to **Tools** tab - test each tool
@@ -314,11 +314,11 @@ If you're running on an EC2 instance, use SSH tunneling:
 
 ```bash
 # From your LOCAL machine (not EC2), run:
-ssh -L 8000:localhost:8000 -L 6274:localhost:6274 ubuntu@your-ec2-ip
+ssh -L 8765:localhost:8765 -L 6274:localhost:6274 ubuntu@your-ec2-ip
 
 # Then open in your local browser:
 # Inspector: http://localhost:6274
-# Your server: http://localhost:8000/mcp
+# Your server: http://localhost:8765/mcp
 ```
 
 ---
@@ -384,7 +384,7 @@ Once your server works, connect it to Claude Code:
   "mcpServers": {
     "world-bank": {
       "type": "streamable-http",
-      "url": "http://127.0.0.1:8000/mcp"
+      "url": "http://127.0.0.1:8765/mcp"
     }
   }
 }
@@ -498,7 +498,7 @@ Before submitting, verify:
 ### "Connection refused" error
 - Ensure your server is running (`uv run python server.py`)
 - Check you're using `127.0.0.1` not `0.0.0.0`
-- Verify port 8000 is not in use: `lsof -i :8000`
+- Verify port 8765 is not in use: `lsof -i :8765`
 
 ### "Module not found" error
 - Run `uv sync` to install dependencies
@@ -519,7 +519,50 @@ Before submitting, verify:
 ## Resources
 
 - [MCP Documentation](https://modelcontextprotocol.io/)
+- [FastMCP GitHub](https://github.com/jlowin/fastmcp) - Python SDK for building MCP servers
 - [FastMCP Guide](https://gofastmcp.com/)
 - [World Bank API Documentation](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation)
 - [REST Countries API](https://restcountries.com/)
 - [Polars Documentation](https://docs.pola.rs/)
+
+## FastMCP Quick Reference
+
+### Creating a Streamable HTTP Server
+
+```python
+from mcp.server.fastmcp import FastMCP
+
+# Initialize server with host and port
+mcp = FastMCP(
+    "my-server-name",
+    host="127.0.0.1",
+    port=8765,
+)
+
+# Define a resource (read-only data)
+@mcp.resource("data://example")
+def get_example_data() -> str:
+    return "Hello from resource!"
+
+# Define a tool (executable function)
+@mcp.tool()
+def my_tool(param: str) -> dict:
+    return {"result": f"Processed: {param}"}
+
+# Run with Streamable HTTP transport
+if __name__ == "__main__":
+    mcp.run(transport="streamable-http")
+```
+
+### Key Concepts
+
+| Decorator | Purpose | Return Type |
+|-----------|---------|-------------|
+| `@mcp.resource("uri://path")` | Expose read-only data | `str` (usually JSON) |
+| `@mcp.resource("uri://path/{param}")` | Parameterized resource | `str` |
+| `@mcp.tool()` | Expose callable function | `dict` or any JSON-serializable |
+
+### Transport Options
+
+- **Streamable HTTP** (recommended): `mcp.run(transport="streamable-http")`
+- **stdio**: `mcp.run(transport="stdio")` - for subprocess-based clients

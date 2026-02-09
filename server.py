@@ -5,7 +5,7 @@ An MCP server that exposes:
 - Resources: Local World Bank indicator data from CSV
 - Tools: Live data from REST Countries and World Bank APIs
 
-Transport: Streamable HTTP on port 8000
+Transport: Streamable HTTP on port 8765
 """
 import json
 import logging
@@ -23,7 +23,7 @@ from mcp.server.fastmcp import FastMCP
 
 DATA_FILE: Path = Path(__file__).parent / "data" / "world_bank_indicators.csv"
 HOST: str = "127.0.0.1"
-PORT: int = 8000
+PORT: int = 8765
 
 # Configure logging
 logging.basicConfig(
@@ -270,5 +270,6 @@ def compare_countries(
 
 if __name__ == "__main__":
     logger.info(f"Starting World Bank MCP Server on http://{HOST}:{PORT}/mcp")
+    logger.info(f"Connect with MCP Inspector or test client at http://{HOST}:{PORT}/mcp")
     logger.info("Press Ctrl+C to stop")
     mcp.run(transport="streamable-http")

@@ -25,7 +25,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-SERVER_URL: str = "http://127.0.0.1:8000/mcp"
+SERVER_URL: str = "http://127.0.0.1:8765/mcp"
 
 
 def _print_separator(title: str) -> None:
