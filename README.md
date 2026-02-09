@@ -236,19 +236,50 @@ except httpx.HTTPStatusError as e:
 
 ---
 
-### Part 4: Documentation (15 points)
+### Part 4: Test Your Server (15 points)
 
-Create your own `README.md` that includes:
+Demonstrate that your server works by testing it with **one of the following options**:
 
-1. **Description** - What your server does
-2. **Setup instructions** - How to install and run
-3. **Resources documented** - What each resource returns
-4. **Tools documented** - What each tool does with example inputs/outputs
-5. **Example prompts** - 3-5 prompts to try with Claude
+#### Option A: Python Test Client (Recommended)
+
+Run the provided test client and capture the output to a log file:
+
+```bash
+# Terminal 1: Start your server
+uv run python server.py
+
+# Terminal 2: Run tests and save output to log file
+uv run python test_client.py 2>&1 | tee test_results.log
+```
+
+**Requirements:**
+- Include `test_results.log` in your repository
+- The log should show all tests passing
+- If any tests fail, fix your implementation before submitting
+
+#### Option B: MCP Inspector
+
+Test your server using the MCP Inspector visual UI:
+
+```bash
+# Terminal 1: Start your server
+uv run python server.py
+
+# Terminal 2: Start MCP Inspector
+npx @modelcontextprotocol/inspector
+```
+
+**Requirements:**
+- Take screenshots showing:
+  1. Successfully connected to your server
+  2. Testing at least one resource (show the response)
+  3. Testing at least one tool (show the response)
+- Create a `screenshots/` folder and include your screenshots
+- Name them descriptively: `inspector-connected.png`, `inspector-resource-test.png`, `inspector-tool-test.png`
 
 ---
 
-## Testing Your Server
+## Testing Your Server (Detailed Instructions)
 
 ### Option 1: MCP Inspector (Recommended)
 
@@ -421,14 +452,28 @@ Try these prompts:
 | **Tools (Part 2)** | 30 | All 3 tools implemented, API calls work correctly |
 | **Error Handling (Part 3)** | 15 | Graceful handling of invalid inputs, API failures |
 | **Code Quality** | 15 | Type hints, docstrings, follows course coding standards |
-| **Documentation (Part 4)** | 15 | README with setup, usage examples, example prompts |
+| **Testing (Part 4)** | 15 | Test log file OR screenshots showing server works |
 
 **Total: 100 points**
 
 ### Bonus Points (+10)
-- Add a 4th tool (e.g., `search_countries_by_region`)
-- Add caching for API responses using `@lru_cache`
-- Add a prompt template using `@mcp.prompt()`
+
+Integrate your MCP server with an AI assistant and provide proof:
+
+**Option 1: Claude Code**
+- Add your server to Claude Code via `.mcp.json`
+- Take screenshots showing Claude using your tools
+- Include screenshots in `screenshots/` folder
+
+**Option 2: Other AI Assistants**
+- Integrate with Goose, Cline, or another MCP-compatible assistant
+- Take screenshots showing the assistant using your tools
+- Include screenshots in `screenshots/` folder
+
+**Screenshot requirements for bonus:**
+- Show the AI assistant connected to your server
+- Show it successfully calling at least one tool (e.g., "What's the GDP of Germany?")
+- Show the response from your server
 
 ---
 
@@ -439,10 +484,12 @@ Before submitting, verify:
 - [ ] Server starts without errors: `uv run python server.py`
 - [ ] All 3 resources return valid data
 - [ ] All 3 tools call external APIs successfully
-- [ ] Test client passes: `uv run python test_client.py`
 - [ ] Code follows course standards: `uv run ruff check .`
-- [ ] Your README.md documents your implementation
+- [ ] **Testing evidence included:**
+  - [ ] Option A: `test_results.log` file with passing tests, OR
+  - [ ] Option B: `screenshots/` folder with MCP Inspector screenshots
 - [ ] All changes committed and pushed to GitHub
+- [ ] **(Bonus)** Screenshots of AI assistant using your server
 
 ---
 
